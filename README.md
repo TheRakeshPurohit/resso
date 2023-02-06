@@ -64,27 +64,33 @@ function App() {
 
 ## API
 
-```js
+```jsx
 import resso from 'resso';
 
 const store = resso({
   count: 0,
-  inc: async () => {
+  inc: () => {
     const { count } = store; // destructure at top first, also 🥷
 
+    // single update
     store.count = count + 1; // directly assign
-    store('count', (prev) => prev + 1); // or an updater funtion
+    store('count', (prev) => prev + 1); // updater funtion
+
+    // multiple updates
+    Object.assign(store, { a, b, c });
   },
 });
+```
 
-// store data are injected by useState, so please ensure to destructure first,
-// top level in a component (Hooks rules), then use, or may get React warning
+```jsx
+// ensure to destructure at top first, because store data are injected by useState
 function App() {
-  const { count, inc } = store;
-  // other component code below ...
+  const { count, inc } = store; // must at top, or may get React warning
 }
+```
 
-// For react<18, to use batch updating:
+```jsx
+// use batch updating when react<18:
 resso.config({ batch: ReactDOM.unstable_batchedUpdates }); // at app entry
 ```
 

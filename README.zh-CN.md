@@ -64,28 +64,34 @@ function App() {
 
 ## API
 
-```js
+```jsx
 import resso from 'resso';
 
 const store = resso({
   count: 0,
-  inc: async () => {
+  inc() {
     const { count } = store; // 在顶层先解构，同样 🥷
 
+    // 单个更新
     store.count = count + 1; // 直接赋值
-    store('count', (prev) => prev + 1); // 或使用更新函数
+    store('count', (prev) => prev + 1); // 更新函数
+
+    // 多个更新
+    Object.assign(store, { a, b, c });
   },
 });
+```
 
-// store 数据其实是以 useState 注入组件，所以请确保在组件
-// 最顶层 (Hooks rules) 先解构再使用，否则将有 React 报错
+```jsx
+// 确保在最顶层先解构，因为 store 数据是以 useState 注入的
 function App() {
-  const { count, inc } = store;
-  // 其它组件代码写在下面 ...
+  const { count, inc } = store; // 必须在最顶部，否则将有 React 报错
 }
+```
 
-// 对于 react<18，实现批量更新：
-// resso.config({ batch: ReactDOM.unstable_batchedUpdates }); // 在 app 入口处
+```jsx
+// react<18 时批量更新：
+resso.config({ batch: ReactDOM.unstable_batchedUpdates }); // at app entry
 ```
 
 ## 按需 re-render
